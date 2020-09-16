@@ -1,0 +1,125 @@
+html {
+    --col-prim-0: #030a24;
+    --col-prim-1: #031549;
+    --col-prim-2: #051539;
+    --col-sec-1:  #F2A342;
+    --col-sec-2:  #698138;
+    --col-sec-3:  #F35B32;
+}
+
+body {
+    background: var(--col-prim-1);
+    font-family: monospace;
+    font-size: 22px;
+    color: var(--col-sec-1);
+    margin: 0;
+}
+
+#main {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+}
+
+#header {
+    height: 100px;
+    background: var(--col-prim-2);
+    border: 1px solid black;
+    z-index: 3;
+
+    display: flex;
+}
+
+#thirds {
+    display: flex;
+    justify-content: center;
+}
+
+#sitename {
+    font-size: 30px;
+
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+#logo {
+    padding: 10px;
+}
+
+#logo img {
+    height: 100%;
+}
+
+.edge {
+    width: 10%;
+}
+
+.flat-container {
+    box-shadow: 0px 0px 20px #00000050;
+}
+
+#center {
+    width: 80%;
+    height: 100vh;
+    background: var(--col-prim-1);
+    z-index: 2;
+    padding: 10px;
+
+    display: flex;
+    justify-content: center;
+}
+
+#memory {
+    margin-right: 6rem;
+    height: 20rem;
+    overflow-y: scroll;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td, th {
+    padding: 1rem;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    background-color: var(--col-prim-0);
+    color: var(--col-sec-3);
+    box-shadow: 0px 5px 20px #00000050;
+    text-align: center;
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.addr {
+    text-align: right;
+    font-style: italic;
+    padding: 10px;
+}
+
+tbody > tr:nth-child(even) {
+    background-color: var(--col-prim-2);
+}
+
+
+input[type="text"] {
+    color: var(--col-sec-2);
+    border: none;
+    border-bottom: 2px solid black;
+    border-radius: 0.5rem 0.5rem 0 0;
+    padding: 0.2rem;
+    background: #ffffff30;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    text-align: center;
+    width: 100%;
+}
+
+
+#registers {
+    margin-left: 6rem;
+}
