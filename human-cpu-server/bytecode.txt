@@ -1,0 +1,89 @@
+Model:
+    There are a number of actors running at every point. Every actor has the following properties:
+        Registers (all 64 bit):
+            $ip: selects the current instruction
+            $ra: used to store addresses
+            $rx, $ry, $rz: general purpose
+        Name (string)
+        Memory: list of arbitrarily many u64s
+        Currently executed human instruction:
+            Actual instruction
+            Previous answers
+
+        Message handlers: list of
+            atom: u64
+            expected-content-len: u64
+            content-addr: u64
+            run-ip: u64
+
+Human instructions:
+    Set reg reg
+    SetMem addr reg
+    ReadMem reg addr
+    {Add, Sub, Mul, Div} reg reg reg
+    {LT, LE, EQ, GE, GT} reg reg reg
+
+Every human instruction:
+    The human is presented with all registers, all of the RAM and one textual instruction
+    eg. >
+        ip: 0xff11879032
+        rhen: 0x0
+        rx: 5
+        rden: 335
+
+        Assign rx + rden to rhen
+
+Computer instructions:
+    idle
+
+        wait for next matching message
+
+    send-msg
+        u64 receiver
+        u64 atom
+        u64 content-len
+        u64 content-addr
+
+        send a message
+
+    make-handler
+        u64 atom
+        u64 expected-content-len
+        u64 store-content-addr
+        u64 run-ip
+
+        make a message handler
+
+    self-addr
+        lvalue store-addr
+
+    create-actor
+        u64 direct-run-ip
+        lvalue store-addr
+
+        creats an actor running direct-run-ip. rhen contains the address of the creator
+
+    print
+        u64 len
+        u64 content-addr
+
+Instruction encoding:
+    Instruction as one byte:
+        Set - 0x53 = 'S'
+        SetMem - 0x73 = 's'
+        ReadMem - 0x52 = 'R'
+
+        Add - 0x2b = '+'
+        Sub - 0x2d = '-'
+        Mul - 0x2a = "*"
+
+        [todo: add the rest]
+
+    Registers are encoded as one byte:
+        $rip - 0x40
+        $ra - 0x41
+        $rhen - 0x48
+        $rx - 0x78
+        $ry - 0x79
+        $rz - 0x7a
+
