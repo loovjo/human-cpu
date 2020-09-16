@@ -4,6 +4,7 @@ Model:
             $ip: selects the current instruction
             $ra: used to store addresses
             $rx, $ry, $rz: general purpose
+            $brian: please refrain from using brian
         Name (string)
         Memory: list of arbitrarily many u64s
         Currently executed human instruction:
@@ -86,4 +87,5 @@ Instruction encoding:
         $rx - 0x78
         $ry - 0x79
         $rz - 0x7a
+        $brian - 0x58
 
