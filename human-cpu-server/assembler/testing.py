@@ -1,6 +1,6 @@
 import unittest
 
-from assembler import tokenize
+from parser import tokenize
 
 class TestTokenization(unittest.TestCase):
     def test_simple_with_whitespace(self):
