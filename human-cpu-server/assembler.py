@@ -72,8 +72,6 @@ def assign_kinds(text):
         current_ch = text[at]
         transition = None
 
-        print(f"At {at} == {current_ch} in {current_category} ")
-
         for case, resulting_category in transition_table[current_category]:
             if case(current_ch):
                 transition = resulting_category
@@ -89,7 +87,8 @@ def assign_kinds(text):
 
     return result
 
-def tokenize(assigned_cats):
+def tokenize(text):
+    assigned_cats = assign_kinds(text)
     assigned_cats.append(('', 'cat-break'))
 
     current_group, current_category = assigned_cats[0]
@@ -106,9 +105,3 @@ def tokenize(assigned_cats):
 
     return result
 
-code = """\
-hello-world $rip#100`2+2`
-"""
-kinds = assign_kinds(code)
-print(kinds)
-print("\n".join(map(str, tokenize(assign_kinds(code)))))
