@@ -30,7 +30,8 @@ class Register(Argument):
         return cpu.registers[self.reg]
 
     def get_desc(self):
-        return "register {self.val}"
+        reg_name = [name for id, name in REGISTERS.items() if id == self.reg][0]
+        return f"register {reg_name}"
 
 def parse_constant(bytestr):
     if len(bytestr) < 9:
@@ -39,7 +40,7 @@ def parse_constant(bytestr):
     if bytestr[0] != 0x4e:
         return None
 
-    return Constant(struct.unpack("Q", bytestr[1:9])), 9
+    return Constant(*struct.unpack("Q", bytestr[1:9])), 9
 
 REGISTERS = {
     0x40: "ip",
