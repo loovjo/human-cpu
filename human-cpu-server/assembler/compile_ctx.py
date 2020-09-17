@@ -18,7 +18,7 @@ class CompileCtx:
 
     def write_expr(self, expr):
         self.exprs[len(self.output_bytes)] = expr
-        self.write_u64(0)
+        self.write_u64(0x4142434445464748)
 
     def new_inst(self):
         self.current_ip = len(self.output_bytes)
