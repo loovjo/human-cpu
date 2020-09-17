@@ -5,6 +5,7 @@ Model:
             $ra: used to store addresses
             $rx, $ry, $rz: general purpose
             $brian: please refrain from using brian
+            #N (N is any 64 bit integer): Pseudo-register containing the constant N
         Name (string)
         Memory: list of arbitrarily many u64s
         Currently executed human instruction:
@@ -35,11 +36,11 @@ Every human instruction:
         Assign rx + rden to rhen
 
 Computer instructions:
-    idle
+    Idle
 
         wait for next matching message
 
-    send-msg
+    Send-msg
         u64 receiver
         u64 atom
         u64 content-len
@@ -47,7 +48,7 @@ Computer instructions:
 
         send a message
 
-    make-handler
+    Make-handler
         u64 atom
         u64 expected-content-len
         u64 store-content-addr
@@ -55,16 +56,16 @@ Computer instructions:
 
         make a message handler
 
-    self-addr
+    Self-addr
         lvalue store-addr
 
-    create-actor
+    Create-actor
         u64 direct-run-ip
         lvalue store-addr
 
         creats an actor running direct-run-ip. rhen contains the address of the creator
 
-    print
+    Print
         u64 len
         u64 content-addr
 
@@ -81,11 +82,11 @@ Instruction encoding:
         [todo: add the rest]
 
     Registers are encoded as one byte:
-        $rip - 0x40
-        $ra - 0x41
-        $rhen - 0x48
-        $rx - 0x78
-        $ry - 0x79
-        $rz - 0x7a
-        $brian - 0x58
-
+        $rip - 0x40 = '@'
+        $ra - 0x41 = 'A'
+        $rhen - 0x48 = 'H'
+        $rx - 0x78 = 'x'
+        $ry - 0x79 = 'y'
+        $rz - 0x7a = 'z'
+        $brian - 0x58 = 'X'
+        $N - 0x4e N = 'N' N (N is encoded as big-endian number)
