@@ -1,6 +1,6 @@
 'start
     Make-handler `on_child_created` `1` `0x100` `on_child_created`
-    Create-actor `init_child` $ra
+    Create-actor `init_child`
     Idle
 
 'on_child_created
