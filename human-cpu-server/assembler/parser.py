@@ -20,7 +20,7 @@ def assign_kinds(text):
     transition_to_register = (lambda ch: ch == "$", "register")
     transition_to_constant = (lambda ch: ch == "#", "constant")
     transition_to_pyexpr = (lambda ch: ch == "`", "py-expr")
-    transition_to_label = (lambda ch: ch == "'", "label")
+    transition_to_label = (lambda ch: ch == "'", "labeldef")
 
     is_letter = lambda ch: unicodedata.category(ch)[0] == "L" or ch == "-"
     is_number = lambda ch: unicodedata.category(ch)[0] == "N"
@@ -42,8 +42,8 @@ def assign_kinds(text):
             (is_letter, "instruction"),
             (otherwise, "cat-break"),
         ],
-        "label": [
-            (is_letter, "label"),
+        "labeldef": [
+            (is_letter, "labeldef"),
             (otherwise, "cat-break"),
         ],
         "register": [
@@ -100,10 +100,28 @@ def tokenize(text):
             current_group += ch
             current_category = cat
         else:
-            if current_category != "cat-break":
-                result.append((current_group, current_category))
+            result.append((current_group, current_category))
             current_group = ch
             current_category = cat
 
     return result
 
+def cleanup(tokens):
+    result = []
+    for (token, cat) in tokens:
+        if cat == "register":
+            assert(token[0] == "$")
+            result.append((token[1:], cat))
+        if cat == "instruction":
+            result.append((token, cat))
+        if cat == "constant":
+            assert(token[0] == "#")
+            result.append((int(token), cat))
+        if cat == "py-expr":
+            assert(token[0] == "`")
+            result.append((token[1:], cat))
+        if cat == "labeldef":
+            assert(token[0] == "'")
+            result.append((token[1:], cat))
+
+    return result
