@@ -39,7 +39,7 @@ def parse_constant(bytestr):
     if bytestr[0] != 0x4e:
         return None
 
-    return ConstantArgument(struct.unpack("Q", bytestr[1:9])), 9
+    return Constant(struct.unpack("Q", bytestr[1:9])), 9
 
 REGISTERS = {
     0x40: "ip",
@@ -75,27 +75,32 @@ parse_argument = parser_any(parse_register, parse_constant)
 def make_instparser(cls, instruction_tag, n_args):
     def parse(bytestr):
         if len(bytestr) < 1:
-            return None
+            return lambda _: None
         if bytestr[0] != instruction_tag:
-            return None
+            return lambda _: None
 
+        print("Parsing", bytestr, "for", cls)
         args = []
         at = 1
         for i in range(n_args):
             res = parse_argument(bytestr[at:])
+            print("got", res)
             if res is None:
-                return None
-            arg, at = res
+                return lambda _: None
+            arg, delta = res
+            at += delta
             args.append(arg)
 
-        return cls(*args)
+        def make_instance(req_addr):
+            return cls(req_addr, *args)
+
+        return make_instance
 
     return parse
 
 class Instruction(ABC):
-    @abstractmethod
     def __init__(self, req_addr):
-        self.req_addr
+        self.req_addr = req_addr
 
     @abstractmethod
     def get_desc(self):
@@ -115,9 +120,9 @@ class Instruction(ABC):
 
 class Set(Instruction):
     def __init__(self, req_addr, reg, val):
-        super(Set).__init__(self, req_addr)
+        super().__init__(req_addr)
 
-        assert(isinstance(reg, RegisterArgument))
+        assert(isinstance(reg, Register))
         self.reg = reg
         self.val = val
 
@@ -128,11 +133,11 @@ class Set(Instruction):
         val = self.val.get_value(cpu)
         return action.WriteToCPU(self.req_addr, new_ram={}, new_regs={self.reg.reg: val})
 
-    parse = make_instparser(Set, 0x53, 2)
+    parse = make_instparser(lambda *x: Set(*x), 0x53, 2)
 
 class SetMem(Instruction):
     def __init__(self, req_addr, addr, val):
-        super(SetMem).__init__(self, req_addr)
+        super().__init__(req_addr)
         self.addr = addr
         self.val = val
 
@@ -144,13 +149,13 @@ class SetMem(Instruction):
         val = self.val.get_value(cpu)
         return action.WriteToCPU(self.req_addr, new_ram={addr: val}, new_regs={})
 
-    parse = make_instparser(SetMem, 0x73, 2)
+    parse = make_instparser(__init__, 0x73, 2)
 
 class ReadMem(Instruction):
     def __init__(self, req_addr, reg_res, addr):
-        super(ReadMem).__init__(self, req_addr)
+        super().__init__(req_addr)
 
-        assert(isinstance(reg_res, RegisterArgument))
+        assert(isinstance(reg_res, Register))
         self.reg_res = reg_res
         self.addr = addr
 
@@ -161,4 +166,10 @@ class ReadMem(Instruction):
         val = cpu.ram[self.val.get_value(cpu)]
         return action.WriteToCPU(self.req_addr, new_ram={}, new_regs={self.reg.reg: val})
 
-    parse = make_instparser(Set, 0x52, 2)
+    parse = make_instparser(__init__, 0x52, 2)
+
+parse_instruction = parser_any(
+    Set.parse,
+    SetMem.parse,
+    ReadMem.parse,
+)
