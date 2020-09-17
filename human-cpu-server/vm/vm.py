@@ -23,14 +23,14 @@ class CPU:
 
         self.handlers = {} # atom: (expected-content-len, store-content-addr, run-ip)
 
-        CPU_LOG.info(f"Made a CPU with address {self.address}")
+        CPU_LOG.info(f"Made a CPU with address {hex(self.address)}")
 
     def receive_message(self, msg_atom, msg_content):
-        print("you've got mail!")
+        CPU_LOG.info(f"{hex(self.address)} got a message: {msg_atom}/{msg_content}")
 
     def query_instructions(self):
         code_after_ip = self.code_ref[self.registers["ip"]:]
-        CPU_LOG.debug(code_after_ip)
+        CPU_LOG.debug(f"Parsing instruction {code_after_ip}")
         inst_init = parse_instruction(code_after_ip)
         if inst_init == None:
             return []
