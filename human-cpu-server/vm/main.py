@@ -37,3 +37,7 @@ display_instinfo(b"!AN\x30\x00\x00\x00\x00\x00\x00\x00N\x02\x00\x00\x00\x00\x00\
 # Self-addr $brian
 display_instinfo(b"?X")
 
+# Create-actor $ip
+display_instinfo(b"}@")
+
+

@@ -1,3 +1,4 @@
+import random
 import struct
 from abc import ABC, abstractmethod
 from enum import Enum
@@ -306,6 +307,22 @@ class Selfaddr(Instruction):
 
     parse = make_instparser(lambda *x: Selfaddr(*x), 0x3f, 1)
 
+class CreateActor(Instruction):
+    def __init__(self, req_addr, run_ip):
+        super().__init__(req_addr)
+
+        self.run_ip = run_ip
+
+    def get_desc(self):
+        return f"Create a new actor running at $ip={self.run_ip.get_desc()}, " + \
+            f"with $ra={hex(self.req_addr)}. Choose a cool and good address for it!"
+
+    def fake_action(self, cpu):
+        run_ip = self.run_ip.get_value(cpu)
+        return action.CreateActor(random.getrandbits(64), run_ip, self.req_addr)
+
+    parse = make_instparser(lambda *x: CreateActor(*x), 0x7d, 1)
+
 parse_instruction = parser_any(
     Set.parse,
     SetMem.parse,
@@ -314,4 +331,5 @@ parse_instruction = parser_any(
     SendMessage.parse,
     MakeHandler.parse,
     Selfaddr.parse,
+    CreateActor.parse,
 )
