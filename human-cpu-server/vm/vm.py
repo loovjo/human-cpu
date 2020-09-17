@@ -59,8 +59,8 @@ class VirtualMachine:
             if core.address == addr:
                 return core
 
-        VM_LOG.warn(f"Tried to access CPU at address {hex(addr)}, but found nothing!")
         if default_on_not_found:
+            VM_LOG.warn(f"Tried to access CPU at address {hex(addr)}, but found nothing!")
             return CPU(-1, -1, self.code)
 
     def print_message(self, msg):
