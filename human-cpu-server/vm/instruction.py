@@ -1,5 +1,6 @@
 import struct
 from abc import ABC, abstractmethod
+from enum import Enum
 
 import action
 
@@ -167,8 +168,80 @@ class ReadMem(Instruction):
 
     parse = make_instparser(lambda *x: ReadMem(*x), 0x52, 2)
 
+class ArithmeticVariant(Enum):
+    ADD = 0x2b
+    SUB = 0x2d
+    MUL = 0x2a
+    DIV = 0x2f
+    LT = 0x3c
+    LE = 0x5b
+    EQ = 0x3d
+    GT = 0x3e
+    GE = 0x5d
+
+    def get_desc(self, a, b):
+        if self == ArithmeticVariant.ADD: return f"{a} + {b}"
+        if self == ArithmeticVariant.SUB: return f"{a} - {b}"
+        if self == ArithmeticVariant.MUL: return f"{a} + {b}"
+        if self == ArithmeticVariant.DIV: return f"{a} / {b} (integer division rounding down)"
+
+        if self == ArithmeticVariant.LT: return f"1 if {a} < {b}, 0 otherwise"
+        if self == ArithmeticVariant.LE: return f"1 if {a} &le; {b}, 0 otherwise"
+        if self == ArithmeticVariant.EQ: return f"1 if {a} = {b}, 0 otherwise"
+        if self == ArithmeticVariant.GT: return f"1 if {a} > {b}, 0 otherwise"
+        if self == ArithmeticVariant.GE: return f"1 if {a} &ge; {b}, 0 otherwise"
+
+    def perform(self, a, b):
+        if self == ArithmeticVariant.ADD: return a + b
+        if self == ArithmeticVariant.SUB: return a - b
+        if self == ArithmeticVariant.MUL: return a + b
+        if self == ArithmeticVariant.DIV: return a // b
+
+        if self == ArithmeticVariant.LT: return a < b
+        if self == ArithmeticVariant.LE: return a <= b
+        if self == ArithmeticVariant.EQ: return a == b
+        if self == ArithmeticVariant.GT: return a > b
+        if self == ArithmeticVariant.GE: return a >= b
+
+class Arithmetic(Instruction):
+    def __init__(self, variant, req_addr, output, arg1, arg2):
+        super().__init__(req_addr)
+
+        assert(isinstance(output, Register))
+
+        self.variant = variant
+        self.output = output
+        self.arg1 = arg1
+        self.arg2 = arg2
+
+    def get_desc(self):
+        return f"Set {self.output.get_desc()} to {self.variant.get_desc(self.arg1.get_desc(), self.arg2.get_desc())}"
+
+    def fake_action(self, cpu):
+        v1 = self.arg1.get_value(cpu)
+        v2 = self.arg2.get_value(cpu)
+        res = self.variant.perform(v1, v2)
+
+        return action.WriteToCPU(self.req_addr, new_ram={}, new_regs={self.output.reg: res})
+
+    def make_parse(variant):
+        return make_instparser(lambda *x: Arithmetic(variant, *x), variant.value, 3)
+
+    parse_add = make_parse(ArithmeticVariant.ADD)
+    parse_sub = make_parse(ArithmeticVariant.SUB)
+    parse_mul = make_parse(ArithmeticVariant.MUL)
+    parse_div = make_parse(ArithmeticVariant.DIV)
+    parse_lt = make_parse(ArithmeticVariant.LT)
+    parse_le = make_parse(ArithmeticVariant.LE)
+    parse_eq = make_parse(ArithmeticVariant.EQ)
+    parse_gt = make_parse(ArithmeticVariant.GT)
+    parse_ge = make_parse(ArithmeticVariant.GE)
+
+    parse = parser_any(parse_add, parse_sub, parse_mul, parse_div, parse_lt, parse_le, parse_eq, parse_gt, parse_ge)
+
 parse_instruction = parser_any(
     Set.parse,
     SetMem.parse,
     ReadMem.parse,
+    Arithmetic.parse,
 )
