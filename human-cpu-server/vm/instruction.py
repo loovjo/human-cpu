@@ -278,7 +278,7 @@ class MakeHandler(Instruction):
 
     def get_desc(self):
         return f"Create a message handler, handling atom {self.atom.get_desc()}, expecting " + \
-            f"{self.expected_content_len.get_desc()} bytes of content. The content should end " + \
+            f"{self.expected_content_len.get_desc()} bytes of content. The content should end up at " + \
             f"address {self.content_addr.get_desc()} and should run at {self.run_ip.get_desc()}"
 
     def fake_action(self, cpu):
