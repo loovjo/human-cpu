@@ -291,6 +291,21 @@ class MakeHandler(Instruction):
 
     parse = make_instparser(lambda *x: MakeHandler(*x), 0x21, 4)
 
+class Selfaddr(Instruction):
+    def __init__(self, req_addr, output):
+        super().__init__(req_addr)
+
+        assert(isinstance(output, Register))
+        self.output = output
+
+    def get_desc(self):
+        return f"Set {self.output.get_desc()} to the address of this core"
+
+    def fake_action(self, cpu):
+        return action.WriteToCPU(self.req_addr, new_ram={}, new_regs={self.output.reg: self.req_addr})
+
+    parse = make_instparser(lambda *x: Selfaddr(*x), 0x3f, 1)
+
 parse_instruction = parser_any(
     Set.parse,
     SetMem.parse,
@@ -298,4 +313,5 @@ parse_instruction = parser_any(
     Arithmetic.parse,
     SendMessage.parse,
     MakeHandler.parse,
+    Selfaddr.parse,
 )
