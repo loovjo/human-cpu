@@ -63,7 +63,7 @@ Computer instructions:
         u64 direct-run-ip
         lvalue store-addr
 
-        creats an actor running direct-run-ip. rhen contains the address of the creator
+        creats an actor running direct-run-ip. ra contains the address of the creator
 
     Print
         u64 len
