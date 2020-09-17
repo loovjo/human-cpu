@@ -202,6 +202,7 @@ class ArithmeticVariant(Enum):
         if self == ArithmeticVariant.GT: return a > b
         if self == ArithmeticVariant.GE: return a >= b
 
+
 class Arithmetic(Instruction):
     def __init__(self, variant, req_addr, output, arg1, arg2):
         super().__init__(req_addr)
@@ -238,9 +239,38 @@ class Arithmetic(Instruction):
 
     parse = parser_any(parse_add, parse_sub, parse_mul, parse_div, parse_lt, parse_le, parse_eq, parse_gt, parse_ge)
 
+
+class SendMessage(Instruction):
+    def __init__(self, req_addr, receiver, atom, content_len, content_addr):
+        super().__init__(req_addr)
+
+        self.receiver = receiver
+        self.atom = atom
+        self.content_len = content_len
+        self.content_addr = content_addr
+
+    def get_desc(self):
+        return f"Send a message to {self.receiver.get_desc()}, with the atom " + \
+            f"{self.atom.get_desc()} and a content cosisting of {self.content_len.get_desc()} " + \
+            f"bytes in ram, starting at {self.content_addr.get_desc()}"
+
+    def fake_action(self, cpu):
+        receiver = self.receiver.get_value(cpu)
+        atom = self.atom.get_value(cpu)
+        content_len = self.content_len.get_value(cpu)
+        content_addr = self.content_addr.get_value(cpu)
+
+        assert(content_len <= 0x8)
+        content = [cpu.ram[i] for i in range(content_addr, content_addr + content_len)]
+
+        return action.SendMessage(receiver, atom, content)
+
+    parse = make_instparser(lambda *x: SendMessage(*x), 0x5e, 4)
+
 parse_instruction = parser_any(
     Set.parse,
     SetMem.parse,
     ReadMem.parse,
     Arithmetic.parse,
+    SendMessage.parse,
 )
