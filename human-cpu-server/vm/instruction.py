@@ -31,8 +31,7 @@ class Register(Argument):
         return cpu.registers[self.reg]
 
     def get_desc(self):
-        reg_name = [name for id, name in REGISTERS.items() if id == self.reg][0]
-        return f"register ${reg_name}"
+        return f"register ${self.reg}"
 
 def parse_constant(bytestr):
     if len(bytestr) < 9:
@@ -57,7 +56,7 @@ def parse_register(bytestr):
         return None
 
     if bytestr[0] in REGISTERS:
-        return Register(bytestr[0]), 1
+        return Register(REGISTERS[bytestr[0]]), 1
 
     return None
 
