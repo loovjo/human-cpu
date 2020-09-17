@@ -267,10 +267,35 @@ class SendMessage(Instruction):
 
     parse = make_instparser(lambda *x: SendMessage(*x), 0x5e, 4)
 
+class MakeHandler(Instruction):
+    def __init__(self, req_addr, atom, expected_content_len, content_addr, run_ip):
+        super().__init__(req_addr)
+
+        self.atom = atom
+        self.expected_content_len = expected_content_len
+        self.content_addr = content_addr
+        self.run_ip = run_ip
+
+    def get_desc(self):
+        return f"Create a message handler, handling atom {self.atom.get_desc()}, expecting " + \
+            f"{self.expected_content_len.get_desc()} bytes of content. The content should end " + \
+            f"address {self.content_addr.get_desc()} and should run at {self.run_ip.get_desc()}"
+
+    def fake_action(self, cpu):
+        atom = self.atom.get_value(cpu)
+        expected_content_len = self.expected_content_len.get_value(cpu)
+        content_addr = self.content_addr.get_value(cpu)
+        run_ip = self.run_ip.get_value(cpu)
+
+        return action.MakeNewHandler(self.req_addr, atom, expected_content_len, content_addr, run_ip)
+
+    parse = make_instparser(lambda *x: MakeHandler(*x), 0x21, 4)
+
 parse_instruction = parser_any(
     Set.parse,
     SetMem.parse,
     ReadMem.parse,
     Arithmetic.parse,
     SendMessage.parse,
+    MakeHandler.parse,
 )
