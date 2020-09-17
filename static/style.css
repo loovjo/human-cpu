@@ -71,12 +71,14 @@ body {
 }
 
 #memory {
-    margin-right: 6rem;
+    margin: 5%;
+    flex-grow: 1;
     height: 20rem;
     overflow-y: scroll;
 }
 
 table {
+    width: 100%;
     border-collapse: collapse;
 }
 
@@ -121,5 +123,6 @@ input[type="text"] {
 
 
 #registers {
-    margin-left: 6rem;
+    margin: 5%;
+    flex-grow: 1;
 }
