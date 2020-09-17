@@ -1,6 +1,7 @@
 import unittest
 
 from parser import tokenize
+from compile_ctx import CompileCtx
 
 class TestTokenization(unittest.TestCase):
     def test_simple_with_whitespace(self):
@@ -49,6 +50,44 @@ class TestTokenization(unittest.TestCase):
             [ ("#1", "constant")
             , ("#2", "constant")
             ]
+        )
+
+
+class TestTokenization(unittest.TestCase):
+
+    def test_write_bytes(self):
+        ctx = CompileCtx()
+        ctx.write_byte(5)
+        ctx.write_byte(6)
+        ctx.write_byte(7)
+        self.assertEqual(
+            ctx.postproc(),
+            bytes([5, 6, 7]),
+        )
+
+    def test_write_u64s(self):
+        ctx = CompileCtx()
+        ctx.write_u64(5)
+        ctx.write_u64(0xffffff)
+        self.assertEqual(
+            ctx.postproc(),
+            b'\x05\x00\x00\x00\x00\x00\x00\x00\xff\xff\xff\x00\x00\x00\x00\x00',
+        )
+
+    def test_labels(self):
+        ctx = CompileCtx()
+        ctx.write_labelref('hello')
+        ctx.write_byte(0x88)
+        ctx.write_labelpos('world')
+
+        ctx.write_labelref('world')
+        ctx.write_u64(0xffffffffffffffff)
+        ctx.write_labelpos('hello')
+
+
+        self.assertEqual(
+            ctx.postproc(),
+            b'\x19\x00\x00\x00\x00\x00\x00\x00\x88\x09\x00\x00\x00\x00\x00\x00\x00\xff\xff\xff\xff\xff\xff\xff\xff',
         )
 
 
