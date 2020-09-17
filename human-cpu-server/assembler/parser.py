@@ -22,7 +22,7 @@ def assign_kinds(text):
     transition_to_pyexpr = (lambda ch: ch == "`", "py-expr")
     transition_to_label = (lambda ch: ch == "'", "labeldef")
 
-    is_letter = lambda ch: unicodedata.category(ch)[0] == "L" or ch == "-"
+    is_letter = lambda ch: unicodedata.category(ch)[0] == "L" or ch in "-_"
     is_number = lambda ch: unicodedata.category(ch)[0] == "N"
 
     transition_to_instruction = (is_letter, "instruction")
