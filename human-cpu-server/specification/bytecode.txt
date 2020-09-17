@@ -2,7 +2,7 @@ Model:
     There are a number of actors running at every point. Every actor has the following properties:
         Registers (all 64 bit):
             $ip: selects the current instruction
-            $ra: used to store addresses
+            $ra: should be used to store addresses, but is general purpose
             $rx, $ry, $rz: general purpose
             $brian: please refrain from using brian
             #N (N is any 64 bit integer): Pseudo-register containing the constant N
