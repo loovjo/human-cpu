@@ -79,12 +79,10 @@ def make_instparser(cls, instruction_tag, n_args):
         if bytestr[0] != instruction_tag:
             return lambda _: None
 
-        print("Parsing", bytestr, "for", cls)
         args = []
         at = 1
         for i in range(n_args):
             res = parse_argument(bytestr[at:])
-            print("got", res)
             if res is None:
                 return lambda _: None
             arg, delta = res
@@ -149,7 +147,7 @@ class SetMem(Instruction):
         val = self.val.get_value(cpu)
         return action.WriteToCPU(self.req_addr, new_ram={addr: val}, new_regs={})
 
-    parse = make_instparser(__init__, 0x73, 2)
+    parse = make_instparser(lambda *x: SetMem(*x), 0x73, 2)
 
 class ReadMem(Instruction):
     def __init__(self, req_addr, reg_res, addr):
@@ -166,7 +164,7 @@ class ReadMem(Instruction):
         val = cpu.ram[self.val.get_value(cpu)]
         return action.WriteToCPU(self.req_addr, new_ram={}, new_regs={self.reg.reg: val})
 
-    parse = make_instparser(__init__, 0x52, 2)
+    parse = make_instparser(lambda *x: ReadMem(*x), 0x52, 2)
 
 parse_instruction = parser_any(
     Set.parse,
