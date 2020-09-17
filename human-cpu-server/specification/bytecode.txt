@@ -78,8 +78,20 @@ Instruction encoding:
         Add - 0x2b = '+'
         Sub - 0x2d = '-'
         Mul - 0x2a = "*"
+        Div - 0x2f = '/'
 
-        [todo: add the rest]
+        LT - 0x3c = '<'
+        LE - 0x5b = '['
+        EQ - 0x3d = '='
+        GT - 0x3e = '>'
+        GE - 0x5d = ']'
+
+        Idle - 0x49 = 'I'
+        Send-msg - 0x5c = '^'
+        Make-handler - 0x21 = '!'
+        Self-addr - 0x3f = '?'
+        Create-actor - 0x7d = '}'
+        Print - 0x23 = '#'
 
     Registers are encoded as one byte:
         $rip - 0x40 = '@'
