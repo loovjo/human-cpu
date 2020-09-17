@@ -11,10 +11,9 @@
 
     ReadMem $ra `0x1000`
 
-    SetMem `0x1008` `0x69`
-    SetMem `0x1009` `0x6a`
+    SetMem `0x1008` `0x696a6b`
 
-    Send-msg $ra `get_msg` `0x2` `0x1008`
+    Send-msg $ra `get_msg` `0x1` `0x1008`
 
 
 'run_a
@@ -30,5 +29,4 @@
 
 'get_msg
 
-    ReadMem $rx `0x1000`
-    Print $rx `0x1001`
+    Print `0x0` `0x1000`
