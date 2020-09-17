@@ -25,6 +25,8 @@ Human instructions:
     {Add, Sub, Mul, Div} reg reg reg
     {LT, LE, EQ, GE, GT} reg reg reg
 
+    First reg is destination, second two are sources
+
 Every human instruction:
     The human is presented with all registers, all of the RAM and one textual instruction
     eg. >
@@ -46,7 +48,7 @@ Computer instructions:
         u64 content-len
         u64 content-addr
 
-        send a message
+        send a message. max content length is 8 bytes
 
     Make-handler
         u64 atom
