@@ -2,10 +2,13 @@ import random
 from collections import defaultdict
 
 from log import VM_LOG, CPU_LOG
+from instruction import parse_instruction
 
 class CPU:
-    def __init__(self, address, ip):
+    def __init__(self, address, ip, code_ref):
         self.address = address
+
+        self.code_ref = code_ref
 
         self.registers = {
             "ip": ip,
@@ -25,13 +28,28 @@ class CPU:
     def receive_message(self, msg_atom, msg_content):
         print("you've got mail!")
 
+    def query_instructions(self):
+        code_after_ip = self.code_ref[self.registers["ip"]:]
+        CPU_LOG.debug(code_after_ip)
+        inst_init = parse_instruction(code_after_ip)
+        inst = inst_init(self.address)
+        if inst == None:
+            return []
+        return [inst]
 
 class VirtualMachine:
     def __init__(self, code):
         VM_LOG.info("Made a virtual machine!")
         self.code = code
 
-        self.cores = [CPU(random.getrandbits(64), 0)]
+        self.cores = [CPU(random.getrandbits(64), 0, self.code)]
+
+    def query_instructions(self):
+        VM_LOG.info("querying instructions")
+        instructions = []
+        for core in self.cores:
+            instructions.extend(core.query_instructions())
+        return instructions
 
     def get_core_with_addr(self, addr, default_on_not_found=True):
         for core in self.cores:
@@ -50,4 +68,4 @@ class VirtualMachine:
             print("[TRIED TO REGISTER A NEW ACTOR WITH AN ALREADY EXISTING ADDRESS")
             return
 
-        self.cores.append(CPU(addr, ip))
+        self.cores.append(CPU(addr, ip, self.code))
