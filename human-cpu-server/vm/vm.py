@@ -37,6 +37,9 @@ class CPU:
         inst = inst_init(self.address)
         return [inst]
 
+    def __str__(self):
+        return f"CPU(addr={hex(self.address)}, registers={self.registers}, ram={self.ram}, handlers={self.handlers})"
+
 class VirtualMachine:
     def __init__(self, code):
         VM_LOG.info("Made a virtual machine!")
