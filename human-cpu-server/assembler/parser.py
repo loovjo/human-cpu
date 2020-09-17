@@ -14,6 +14,8 @@ import unicodedata
 # #`py-expr` is compiled into #N where N is the result of evaluating `py-expr`
 
 def assign_kinds(text):
+    # TODO: Turn this into classes with methods for transitions
+
     transition_to_whitespace = (lambda ch: ch in " \t\n", "whitespace")
     transition_to_register = (lambda ch: ch == "$", "register")
     transition_to_constant = (lambda ch: ch == "#", "constant")
