@@ -75,16 +75,16 @@ parse_argument = parser_any(parse_register, parse_constant)
 def make_instparser(cls, instruction_tag, n_args):
     def parse(bytestr):
         if len(bytestr) < 1:
-            return lambda _: None
+            return None
         if bytestr[0] != instruction_tag:
-            return lambda _: None
+            return None
 
         args = []
         at = 1
         for i in range(n_args):
             res = parse_argument(bytestr[at:])
             if res is None:
-                return lambda _: None
+                return None
             arg, delta = res
             at += delta
             args.append(arg)

@@ -32,9 +32,9 @@ class CPU:
         code_after_ip = self.code_ref[self.registers["ip"]:]
         CPU_LOG.debug(code_after_ip)
         inst_init = parse_instruction(code_after_ip)
-        inst = inst_init(self.address)
-        if inst == None:
+        if inst_init == None:
             return []
+        inst = inst_init(self.address)
         return [inst]
 
 class VirtualMachine:
