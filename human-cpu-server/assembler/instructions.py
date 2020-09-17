@@ -79,7 +79,7 @@ CPU_INSTRUCTIONS = {
               "GE": 0x5d, # = ']'
 
             "Idle": 0x49, # = 'I'
-        "Send-msg": 0x5c, # = '^'
+        "Send-msg": 0x5e, # = '^'
     "Make-handler": 0x21, # = '!'
        "Self-addr": 0x3f, # = '?'
     "Create-actor": 0x7d, # = '}'
