@@ -1,32 +1,30 @@
 'start
-
-    Make-handler `on_child_created` `1` `0x1000` `on_child_created`
-
-    Create-actor `run_a` $ra
-
+    Make-handler `on_child_created` `1` `0x100` `on_child_created`
+    Create-actor `init_child` $ra
     Idle
-
 
 'on_child_created
 
-    ReadMem $ra `0x1000`
+    SetMem `0x1000` `0x68656c6c6f`
 
-    SetMem `0x1008` `0x696a6b`
+    ReadMem $ra `0x100`
+    Send-msg $ra `print_msg` `0x1` `0x1000`
 
-    Send-msg $ra `get_msg` `0x1` `0x1008`
-
-
-'run_a
-    Make-handler `get_msg` `2` `0x1000` `get_msg`
-
-    Self-addr $rx
-    SetMem `0x1000` $rx
-
-    Send-msg $ra `on_child_created` `1` `0x1000`
+    SetMem `0x1000` `0x20776f726c64`
+    Send-msg $ra `print_msg` `0x1` `0x1000`
 
     Idle
 
 
-'get_msg
+'init_child
+    Make-handler `print_msg` `1` `0x1000` `print_msg`
 
-    Print `0x0` `0x1000`
+    Self-addr $rx
+    SetMem `0x100` $rx
+
+    Send-msg $ra `on_child_created` `1` `0x100`
+
+    Idle
+
+'print_msg
+    Print `0x5` `0x1000`
