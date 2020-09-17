@@ -79,6 +79,9 @@ def assign_kinds(text):
                 transition = resulting_category
                 break
 
+        if transition == None:
+            print("Unexpected", text[at-5:at+1], "<---")
+
         if transition == "cat-break":
             result.append(('', transition))
         else:
